@@ -6,7 +6,7 @@ import androidx.room.RoomDatabaseConstructor
 import platform.Foundation.NSHomeDirectory
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+// Χωρίς Suppress, σκέτο actual
 actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {

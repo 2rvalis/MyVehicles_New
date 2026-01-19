@@ -106,14 +106,9 @@ room {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    // Αυτό είναι το σωστό για KMP:
+    ksp(libs.androidx.room.compiler)
 
-    // Ρύθμιση του KSP Compiler για όλους τους στόχους
-    val roomCompiler = libs.androidx.room.compiler
-    add("kspAndroid", roomCompiler)
-    add("kspIosX64", roomCompiler)
-    add("kspIosArm64", roomCompiler)
-    add("kspIosSimulatorArm64", roomCompiler)
+    // Αφαίρεσε τυχόν add("kspIos...", ...) ή παρόμοια αν υπάρχουν
+    // για να αναγκάσεις τον compiler να τρέξει ενιαία.
 }
-
-//for activation

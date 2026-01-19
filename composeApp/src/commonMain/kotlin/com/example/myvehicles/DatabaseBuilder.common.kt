@@ -8,7 +8,8 @@ expect fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase>
 
 // Βοηθητική συνάρτηση για να παίρνουμε τη βάση
 fun getDatabase(): VehicleDatabase {
+    // Στο Android, η getDatabaseBuilder() θα χρησιμοποιήσει τη globalContext
     return getDatabaseBuilder()
-        .setDriver(BundledSQLiteDriver()) // ΑΠΑΡΑΙΤΗΤΟ για να παίξει το iOS στο Appetize
+        .setDriver(BundledSQLiteDriver())
         .build()
 }
