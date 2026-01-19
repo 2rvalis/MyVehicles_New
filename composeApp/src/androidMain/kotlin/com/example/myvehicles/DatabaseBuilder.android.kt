@@ -10,6 +10,6 @@ fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<VehicleDatabase> {
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
         name = dbFile.absolutePath,
-        factory = { VehicleDatabase::class.instantiateImpl() }
+        factory = { AppDatabaseConstructor.initialize() }
     )
 }
