@@ -2,8 +2,13 @@ package com.example.myvehicles
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import platform.Foundation.NSHomeDirectory
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+
+// Το actual object μπαίνει εδώ πλέον
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"

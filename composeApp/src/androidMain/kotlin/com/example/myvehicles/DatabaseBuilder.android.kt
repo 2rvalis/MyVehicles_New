@@ -10,6 +10,6 @@ fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<VehicleDatabase> {
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
         name = dbFile.absolutePath,
-        factory = { AppDatabaseConstructor.initialize() }
+        factory = { AppDatabaseConstructor.initialize() } // <-- Αυτό πρέπει να λέει
     )
 }
