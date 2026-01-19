@@ -6,14 +6,17 @@ import androidx.room.RoomDatabaseConstructor
 import platform.Foundation.NSHomeDirectory
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 
-// ΠΡΟΣΘΕΣΕ ΤΟ @Suppress. Είναι απαραίτητο για να μην χτυπάει το KSP της Room στο iOS
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
+actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> {
+    override fun initialize(): VehicleDatabase {
+        throw NoSuchMethodError("This should be overridden by Room's generated code")
+    }
+}
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(
         name = dbFile,
         factory = { AppDatabaseConstructor.initialize() }
-    ).setDriver(BundledSQLiteDriver()) // Απαραίτητο για το native build
+    ).setDriver(BundledSQLiteDriver())
 }
