@@ -1,21 +1,15 @@
 package com.example.myvehicles
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// Χρησιμοποιούμε μια μεταβλητή για να κρατάμε το context
-@SuppressLint("StaticFieldLeak")
-lateinit var globalContext: Context
-
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
-    // Χρησιμοποιούμε το applicationContext για να αποφύγουμε Memory Leaks
-    val context = globalContext.applicationContext
-    val dbFile = context.getDatabasePath("vehicles.db")
-
+fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<VehicleDatabase> {
+    val appContext = ctx.applicationContext
+    val dbFile = appContext.getDatabasePath("vehicle_room.db")
     return Room.databaseBuilder<VehicleDatabase>(
-        context = context,
-        name = dbFile.absolutePath
+        context = appContext,
+        name = dbFile.absolutePath,
+        factory = { VehicleDatabase::class.instantiateImpl() }
     )
 }
