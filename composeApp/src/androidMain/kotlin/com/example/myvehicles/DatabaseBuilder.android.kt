@@ -16,6 +16,4 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
         factory = { AppDatabaseConstructor.initialize() }
     )
 }
-
-// ΔΙΑΓΡΑΨΕ ΤΟ actual object AppDatabaseConstructor ΑΠΟ ΕΔΩ.
-// Η Room το δημιουργεί αυτόματα στο build/generated/ksp/android/...
+// ΤΙΠΟΤΑ ΑΛΛΟ ΕΔΩ. Το actual object το φτιάχνει το KSP μόνο του.

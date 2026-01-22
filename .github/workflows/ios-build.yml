@@ -22,20 +22,46 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      # Χτίζουμε Android και iOS Simulator ταυτόχρονα
-      - name: Build Android and iOS
-        run: ./gradlew clean :composeApp:assembleDebug :composeApp:iosSimulatorArm64Binaries --stacktrace
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
-      # Ανέβασμα του Android APK (προαιρετικά, για να το έχεις)
+      # 1. Build Android (H "κόρη οφθαλμού")
+      - name: Build Android
+        run: ./gradlew :composeApp:assembleDebug
+
+      # 2. Build iOS Simulator App
+      - name: Build iOS for Simulator
+        run: |
+          # Χτίζουμε το framework
+          ./gradlew :composeApp:iosSimulatorArm64Binaries
+          
+          # Χτίζουμε το .app μέσω xcodebuild
+          xcodebuild -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/derivedData \
+            ONLY_ACTIVE_ARCH=NO \
+            build
+          
+          # Εντοπισμός και συμπίεση του .app για το Appetize
+          APP_PATH=$(find build/derivedData -name "*.app" | head -n 1)
+          APP_DIR=$(dirname "$APP_PATH")
+          APP_NAME=$(basename "$APP_PATH")
+          cd "$APP_DIR"
+          zip -r ios-app-sim.zip "$APP_NAME"
+          cp ios-app-sim.zip $GITHUB_WORKSPACE/
+
+      # 3. Ανέβασμα Android APK
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
           path: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
-      # ΑΝΕΒΑΣΜΑ ΓΙΑ APPETIZE.IO (Το σημαντικό για σένα)
-      - name: Upload iOS App for Appetize
+      # 4. Ανέβασμα iOS ZIP (για Appetize.io)
+      - name: Upload iOS Zip for Appetize
         uses: actions/upload-artifact@v4
         with:
-          name: ios-simulator-app
-          path: composeApp/build/bin/iosSimulatorArm64/debugFramework/ComposeApp.framework
+          name: ios-app-zip
+          path: ios-app-sim.zip

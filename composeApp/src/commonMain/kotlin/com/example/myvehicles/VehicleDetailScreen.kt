@@ -1,47 +1,17 @@
 package com.example.myvehicles
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.PictureAsPdf
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +33,7 @@ fun VehicleDetailScreen(
     var isEditing by remember { mutableStateOf(false) }
     val picker = getFilePicker()
 
+    // States
     var brand by remember { mutableStateOf(vehicle.brand) }
     var model by remember { mutableStateOf(vehicle.model) }
     var color by remember { mutableStateOf(vehicle.color) }
@@ -108,9 +79,17 @@ fun VehicleDetailScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())) {
 
+            // Κύρια Εικόνα Οχήματος
             Box(
                 modifier = Modifier.fillMaxWidth().height(220.dp).background(Color.LightGray)
-                    .clickable(enabled = isEditing) { picker.pickImage { imagePath = it } },
+                    .clickable(enabled = isEditing) {
+                        picker.pickImage { newPath ->
+                            if (newPath != null) {
+                                FileHelper.deleteFile(imagePath) // Διαγραφή παλιάς εικόνας από τη μνήμη
+                                imagePath = newPath
+                            }
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 if (!imagePath.isNullOrEmpty()) {
@@ -145,9 +124,39 @@ fun VehicleDetailScreen(
                 Spacer(Modifier.height(8.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    DocumentBox("Πινακίδα", licensePlatePath, isEditing, { licensePlatePath = it }, { openFilePlatform(licensePlatePath ?: "") }, { licensePlatePath = null })
-                    DocumentBox("Άδεια", registrationPath, isEditing, { registrationPath = it }, { openFilePlatform(registrationPath ?: "") }, { registrationPath = null })
-                    DocumentBox("Ασφάλεια", insurancePath, isEditing, { insurancePath = it }, { openFilePlatform(insurancePath ?: "") }, { insurancePath = null }, isPdfOnly = true)
+                    DocumentBox("Πινακίδα", licensePlatePath, isEditing,
+                        onFileSelected = {
+                            if (it != null) FileHelper.deleteFile(licensePlatePath)
+                            licensePlatePath = it
+                        },
+                        onClear = {
+                            FileHelper.deleteFile(licensePlatePath)
+                            licensePlatePath = null
+                        },
+                        onOpenFile = { openFilePlatform(licensePlatePath) }
+                    )
+                    DocumentBox("Άδεια", registrationPath, isEditing,
+                        onFileSelected = {
+                            if (it != null) FileHelper.deleteFile(registrationPath)
+                            registrationPath = it
+                        },
+                        onClear = {
+                            FileHelper.deleteFile(registrationPath)
+                            registrationPath = null
+                        },
+                        onOpenFile = { openFilePlatform(registrationPath) }
+                    )
+                    DocumentBox("Ασφάλεια", insurancePath, isEditing,
+                        onFileSelected = {
+                            if (it != null) FileHelper.deleteFile(insurancePath)
+                            insurancePath = it
+                        },
+                        onClear = {
+                            FileHelper.deleteFile(insurancePath)
+                            insurancePath = null
+                        },
+                        onOpenFile = { openFilePlatform(insurancePath) }
+                    )
                 }
                 Spacer(Modifier.height(32.dp))
             }
@@ -156,31 +165,48 @@ fun VehicleDetailScreen(
 }
 
 @Composable
-fun DocumentBox(label: String, path: String?, isEditing: Boolean, onFileSelected: (String?) -> Unit, onOpenFile: () -> Unit, onClear: () -> Unit, isPdfOnly: Boolean = false) {
+fun DocumentBox(
+    label: String,
+    path: String?,
+    isEditing: Boolean,
+    onFileSelected: (String?) -> Unit,
+    onClear: () -> Unit,
+    onOpenFile: () -> Unit
+) {
     val picker = getFilePicker()
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(contentAlignment = Alignment.TopEnd) {
             Box(
-                modifier = Modifier.size(90.dp).clip(RoundedCornerShape(12.dp)).border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray)
                     .clickable {
-                        if (isEditing) picker.pickFile { onFileSelected(it) }
-                        else if (!path.isNullOrEmpty()) onOpenFile()
+                        if (isEditing) {
+                            picker.pickFile { onFileSelected(it) }
+                        } else if (!path.isNullOrEmpty()) {
+                            onOpenFile()
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {
                 if (!path.isNullOrEmpty()) {
-                    if (isPdfOnly || path.lowercase().contains("pdf")) {
-                        Icon(Icons.Default.PictureAsPdf, "PDF", tint = Color.Red, modifier = Modifier.size(45.dp))
+                    if (path.contains("pdf")) {
+                        Icon(Icons.Default.PictureAsPdf, null, tint = Color.Red, modifier = Modifier.size(45.dp))
                     } else {
                         AsyncImage(model = path, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                     }
                 } else {
-                    Icon(if (isEditing) Icons.Default.Add else Icons.Default.Description, null, tint = Color.LightGray)
+                    Icon(if (isEditing) Icons.Default.Add else Icons.Default.Description, null, tint = Color.Gray)
                 }
             }
+
             if (isEditing && !path.isNullOrEmpty()) {
-                IconButton(onClick = onClear, modifier = Modifier.offset(x = 12.dp, y = (-12).dp).size(28.dp).background(Color.Red, CircleShape)) {
+                IconButton(
+                    onClick = onClear,
+                    modifier = Modifier.offset(x = 12.dp, y = (-12).dp).size(28.dp).background(Color.Red, CircleShape)
+                ) {
                     Icon(Icons.Default.Close, null, tint = Color.White, modifier = Modifier.size(16.dp))
                 }
             }

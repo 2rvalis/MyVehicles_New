@@ -11,5 +11,4 @@ abstract class VehicleDatabase : RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
 }
 
-// Αυτό πρέπει να είναι ακριβώς έτσι:
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
