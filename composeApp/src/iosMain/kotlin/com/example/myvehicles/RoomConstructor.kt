@@ -3,9 +3,9 @@ package com.example.myvehicles
 import androidx.room.RoomDatabaseConstructor
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> {
+actual class AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> {
     override fun initialize(): VehicleDatabase = instantiateImpl()
 }
 
-// Η Room στο iOS χρειάζεται αυτή τη δήλωση για να "δέσει" τον κώδικα
+// Η εσωτερική συνάρτηση της Room για το iOS
 expect fun instantiateImpl(): VehicleDatabase
