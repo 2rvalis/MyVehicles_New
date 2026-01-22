@@ -9,7 +9,7 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(
         name = dbFile,
-        factory = { instantiateImpl() }
+        factory = { instantiateDatabase() }
     ).setDriver(BundledSQLiteDriver())
 }
 

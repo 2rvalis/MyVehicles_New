@@ -14,7 +14,7 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
         context = appContext,
         name = dbFile.absolutePath,
         // Χρησιμοποιούμε την _Impl κλάση που παράγει η Room αυτόματα στο Android
-        factory = { instantiateImpl() }
+        factory = { instantiateDatabase() }
     )
 }
 
