@@ -9,9 +9,9 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(
         name = dbFile,
-        factory = { instantiateImpl() } // Χρησιμοποιούμε την εσωτερική συνάρτηση
+        factory = { instantiateImpl() }
     ).setDriver(BundledSQLiteDriver())
 }
 
-// Αυτό το expect θα συνδεθεί με το generated code της Room στο iOS
+// Η ίδια δήλωση expect όπως στο Android
 expect fun instantiateImpl(): VehicleDatabase

@@ -13,7 +13,10 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
         name = dbFile.absolutePath,
-        factory = { AppDatabaseConstructor().initialize() }
+        // Χρησιμοποιούμε την _Impl κλάση που παράγει η Room αυτόματα στο Android
+        factory = { instantiateImpl() }
     )
 }
-// ΤΙΠΟΤΑ ΑΛΛΟ ΕΔΩ. Το actual object το φτιάχνει το KSP μόνο του.
+
+// Δηλώνουμε ότι η Room θα μας δώσει αυτή τη συνάρτηση
+expect fun instantiateImpl(): VehicleDatabase
