@@ -3,8 +3,6 @@ name: Build and Test
 on:
   push:
     branches: [ master, main ]
-  pull_request:
-    branches: [ master, main ]
 
 jobs:
   build:
@@ -22,46 +20,20 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      # 1. Build Android (H "κόρη οφθαλμού")
-      - name: Build Android
-        run: ./gradlew :composeApp:assembleDebug
-
-      # 2. Build iOS Simulator App
-      - name: Build iOS for Simulator
+      - name: Build iOS Simulator App
         run: |
-          # Χτίζουμε το framework
+          ./gradlew clean
+          # Χτίζουμε το framework για τον simulator
           ./gradlew :composeApp:iosSimulatorArm64Binaries
           
-          # Χτίζουμε το .app μέσω xcodebuild
-          xcodebuild -project iosApp/iosApp.xcodeproj \
-            -scheme iosApp \
-            -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath build/derivedData \
-            ONLY_ACTIVE_ARCH=NO \
-            build
-          
-          # Εντοπισμός και συμπίεση του .app για το Appetize
-          APP_PATH=$(find build/derivedData -name "*.app" | head -n 1)
-          APP_DIR=$(dirname "$APP_PATH")
-          APP_NAME=$(basename "$APP_PATH")
-          cd "$APP_DIR"
-          zip -r ios-app-sim.zip "$APP_NAME"
-          cp ios-app-sim.zip $GITHUB_WORKSPACE/
+          # Δημιουργία φακέλου .app για το Appetize
+          mkdir -p build/Appetize
+          cp -R composeApp/build/bin/iosSimulatorArm64/debugFramework/ComposeApp.framework build/Appetize/ComposeApp.app
+          cd build/Appetize
+          zip -r ios-app.zip ComposeApp.app
 
-      # 3. Ανέβασμα Android APK
-      - name: Upload Android APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-debug-apk
-          path: composeApp/build/outputs/apk/debug/composeApp-debug.apk
-
-      # 4. Ανέβασμα iOS ZIP (για Appetize.io)
-      - name: Upload iOS Zip for Appetize
+      - name: Upload for Appetize
         uses: actions/upload-artifact@v4
         with:
           name: ios-app-zip
-          path: ios-app-sim.zip
+          path: build/Appetize/ios-app.zip
