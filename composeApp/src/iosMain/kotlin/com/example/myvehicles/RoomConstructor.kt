@@ -9,6 +9,6 @@ actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> 
 
 /**
  * Η Room παράγει αυτή τη συνάρτηση αυτόματα στο iOS.
- * Τη δηλώνουμε ως extern για να τη βρει ο linker.
+ * Τη δηλώνουμε ως 'expect' (αντί για extern) για να είναι συμβατή με το KSP της Room 2.7.0.
  */
-extern fun instantiateImpl(): VehicleDatabase
+expect fun instantiateImpl(): VehicleDatabase
