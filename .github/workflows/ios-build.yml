@@ -22,17 +22,27 @@ jobs:
 
       - name: Build iOS Simulator App
         run: |
+          # Καθαρισμός για να αποφύγουμε παλιά αρχεία (Cache)
           ./gradlew clean
-          # Χτίζουμε το framework για τον simulator
-          ./gradlew :composeApp:iosSimulatorArm64Binaries
+          
+          # Εκτέλεση build με --info και --stacktrace για αναλυτικό έλεγχο του σφάλματος KSP
+          ./gradlew :composeApp:iosSimulatorArm64Binaries --info --stacktrace
           
           # Δημιουργία φακέλου .app για το Appetize
           mkdir -p build/Appetize
-          cp -R composeApp/build/bin/iosSimulatorArm64/debugFramework/ComposeApp.framework build/Appetize/ComposeApp.app
-          cd build/Appetize
-          zip -r ios-app.zip ComposeApp.app
+          
+          # Ελέγχουμε αν το framework δημιουργήθηκε πριν το αντιγράψουμε
+          if [ -d "composeApp/build/bin/iosSimulatorArm64/debugFramework/ComposeApp.framework" ]; then
+            cp -R composeApp/build/bin/iosSimulatorArm64/debugFramework/ComposeApp.framework build/Appetize/ComposeApp.app
+            cd build/Appetize
+            zip -r ios-app.zip ComposeApp.app
+          else
+            echo "Framework not found, build might have failed."
+            exit 1
+          fi
 
       - name: Upload for Appetize
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: ios-app-zip

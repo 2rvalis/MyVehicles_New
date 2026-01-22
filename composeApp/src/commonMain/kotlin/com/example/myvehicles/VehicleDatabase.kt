@@ -11,5 +11,6 @@ abstract class VehicleDatabase : RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
 }
 
+// Εδώ πρέπει να είναι το expect
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object MyDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
