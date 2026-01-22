@@ -11,5 +11,6 @@ actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> 
 
 /**
  * Αυτή η συνάρτηση παράγεται αυτόματα από τη Room στο iOS build.
+ * Τη δηλώνουμε ως 'expect' για να "κουμπώσει" με τον κώδικα της Room.
  */
 expect fun instantiateImpl(): VehicleDatabase
