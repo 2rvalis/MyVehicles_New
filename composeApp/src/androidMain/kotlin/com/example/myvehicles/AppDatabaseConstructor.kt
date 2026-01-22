@@ -1,9 +1,6 @@
 package com.example.myvehicles
 
-import androidx.room.RoomDatabaseConstructor
-
-// Δηλώνουμε το expect εδώ για το Android
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
-
-// Στο Android δεν χρειάζεται actual object, το παράγει η Room μόνο της.
+// Μην γράψεις τίποτα άλλο.
+// Αν το build στο Android σου βγάζει "Unresolved reference",
+// τότε και μόνο τότε πρόσθεσε:
+// actual object AppDatabaseConstructor : androidx.room.RoomDatabaseConstructor<VehicleDatabase>
