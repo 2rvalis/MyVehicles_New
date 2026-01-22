@@ -9,10 +9,9 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(
         name = dbFile,
-        factory = { instantiateImpl() } // Εδώ γίνεται η "μαγεία"
+        factory = {  instantiateImpl() }
     ).setDriver(BundledSQLiteDriver())
 }
 
-// Δηλώνουμε την expect συνάρτηση εδώ, μέσα στο iosMain
-// Η Room θα την υλοποιήσει αυτόματα κατά το build του iOS
+// Αυτό το expect "ξεγελάει" το KSP γιατί δεν έχει annotation
 expect fun instantiateImpl(): VehicleDatabase
