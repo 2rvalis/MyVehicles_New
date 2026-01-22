@@ -2,9 +2,14 @@ package com.example.myvehicles
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.ConstructedBy
+import androidx.room.RoomDatabaseConstructor
 
 @Database(entities = [Vehicle::class], version = 1)
-// ΟΧΙ @ConstructedBy εδώ. Το αφαιρούμε οριστικά.
+@ConstructedBy(AppDatabaseConstructor::class)
 abstract class VehicleDatabase : RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
 }
+
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
