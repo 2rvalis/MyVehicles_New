@@ -1,5 +1,11 @@
 package com.example.myvehicles
 
-// Το αρχείο είναι πλέον κενό από κώδικα.
-// Το KSP δεν θα βρει καμία δήλωση @ConstructedBy εδώ,
-// οπότε το σφάλμα θα εξαφανιστεί.
+import androidx.room.RoomDatabaseConstructor
+
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+actual object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> {
+    override fun initialize(): VehicleDatabase = instantiateImpl()
+}
+
+// Αυτό το expect είναι απαραίτητο για να "κουμπώσει" με το generated code της Room
+expect fun instantiateImpl(): VehicleDatabase
