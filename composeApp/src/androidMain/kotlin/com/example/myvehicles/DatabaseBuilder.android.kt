@@ -13,7 +13,7 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
         name = dbFile.absolutePath,
-        factory = { AppDatabaseConstructor.initialize() }
+        factory = { AppDatabaseConstructor().initialize() }
     )
 }
 // ΤΙΠΟΤΑ ΑΛΛΟ ΕΔΩ. Το actual object το φτιάχνει το KSP μόνο του.
