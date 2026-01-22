@@ -1,7 +1,11 @@
 package com.example.myvehicles
 
-/**
- * Αυτή η συνάρτηση παράγεται αυτόματα από το Room KSP plugin.
- * Τη δηλώνουμε ως expect για να τη βλέπει ο Builder μας.
- */
+import androidx.room.RoomDatabaseConstructor
+
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+actual object VehicleDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase> {
+    override fun initialize(): VehicleDatabase = instantiateImpl()
+}
+
+// Η συνάρτηση που παράγει η Room
 expect fun instantiateImpl(): VehicleDatabase
