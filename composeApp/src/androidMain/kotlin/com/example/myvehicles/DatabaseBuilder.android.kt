@@ -13,10 +13,10 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
         name = dbFile.absolutePath,
-        // Χρησιμοποιούμε την _Impl κλάση που παράγει η Room αυτόματα στο Android
-        factory = { instantiateDatabase() }
-    )
+    ).setDriver(androidx.sqlite.driver.bundled.BundledSQLiteDriver()) // Προαιρετικό αλλά προτείνεται για συνέπεια
+        .setQueryCoroutineContext(kotlinx.coroutines.Dispatchers.IO)
 }
 
-// Δηλώνουμε ότι η Room θα μας δώσει αυτή τη συνάρτηση
-expect fun instantiateImpl(): VehicleDatabase
+// ΔΙΑΓΡΑΨΕ ΤΗΝ ΓΡΑΜΜΗ factory = { ... }
+// Στο Android, αν έχεις το @ConstructedBy στην VehicleDatabase,
+// η Room βρίσκει ΜΟΝΗ ΤΗΣ τον Constructor, δεν χρειάζεται factory στην alpha10!

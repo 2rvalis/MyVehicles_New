@@ -10,6 +10,3 @@ import androidx.room.RoomDatabaseConstructor
 abstract class VehicleDatabase : RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
 }
-
-// Στην alpha10 αυτό ΔΕΝ χτυπάει στο GitHub
-expect object AppDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
