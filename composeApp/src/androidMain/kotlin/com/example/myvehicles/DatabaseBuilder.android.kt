@@ -10,7 +10,6 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val appContext = globalContext.applicationContext
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
-        name = appContext.getDatabasePath("vehicle_room.db").absolutePath,
-        // Στο Android η Room βρίσκει μόνη της τον AppDatabaseConstructor
+        name = appContext.getDatabasePath("vehicle_room.db").absolutePath
     )
 }
