@@ -6,15 +6,13 @@ import androidx.room.RoomDatabase
 
 lateinit var globalContext: Context
 
-actual fun getDatabaseFactory(): () -> VehicleDatabase = {
-    VehicleDatabase_Impl() // Αυτή η κλάση παράγεται πάντα από τη Room
-}
-
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val appContext = globalContext.applicationContext
+    val dbFile = appContext.getDatabasePath("vehicle_room.db")
+
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
-        name = appContext.getDatabasePath("vehicle_room.db").absolutePath,
-        factory = getDatabaseFactory()
+        name = dbFile.absolutePath,
+        factory = { AppDatabaseConstructor.initialize() }
     )
 }
