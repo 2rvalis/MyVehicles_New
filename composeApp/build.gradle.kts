@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
-    id("androidx.room") version "2.7.0-alpha11"
+    id("androidx.room") version "2.7.0-alpha11" // Συγχρονισμένο με την έκδοση που ζήτησες
 }
 
 kotlin {
@@ -27,7 +27,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            // Σύνδεση με την SQLite του συστήματος iOS
             linkerOpts("-lsqlite3")
             freeCompilerArgs += "-Xruntime-logs=gc=info"
         }
@@ -61,19 +60,18 @@ kotlin {
             implementation(libs.androidx.core.ktx)
         }
 
-        // Καθαρή δημιουργία του iosMain χωρίς χειροκίνητα srcDirs
+        // Δημιουργία iosMain
         val iosMain by creating {
             dependsOn(commonMain.get())
         }
 
-        // Σύνδεση των συγκεκριμένων targets με το iosMain
-        iosX64Main.get().dependsOn(iosMain)
-        iosArm64Main.get().dependsOn(iosMain)
-        iosSimulatorArm64Main.get().dependsOn(iosMain)
+        // Σύνδεση targets με iosMain
+        val iosX64Main by getting { dependsOn(iosMain) }
+        val iosArm64Main by getting { dependsOn(iosMain) }
+        val iosSimulatorArm64Main by getting { dependsOn(iosMain) }
     }
 
     compilerOptions {
-        // Απαραίτητο για το expect/actual της Room
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
@@ -100,15 +98,19 @@ android {
     }
 }
 
+// Ρύθμιση Room Plugin
 room {
     schemaDirectory("$projectDir/schemas")
     generateKotlin = true
 }
 
+// ΚΡΙΣΙΜΟ: Ρύθμιση KSP για αποφυγή του "Already defined"
 dependencies {
-    // Αυτό είναι το σωστό για KMP:
     ksp(libs.androidx.room.compiler)
+}
 
-    // Αφαίρεσε τυχόν add("kspIos...", ...) ή παρόμοια αν υπάρχουν
-    // για να αναγκάσεις τον compiler να τρέξει ενιαία.
+// Αυτό το μπλοκ λέει στο KSP να ΜΗΝ παράγει τον Constructor αυτόματα,
+// επειδή τον έχουμε ήδη ορίσει εμείς στο commonMain/iosMain/androidMain.
+ksp {
+    arg("room.androidx.room.RoomDatabaseConstructor", "false")
 }
