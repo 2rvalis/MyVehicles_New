@@ -8,11 +8,9 @@ lateinit var globalContext: Context
 
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val appContext = globalContext.applicationContext
-    val dbFile = appContext.getDatabasePath("vehicle_room.db")
-
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
-        name = dbFile.absolutePath,
-        factory = { AppDatabaseConstructor.initialize() }
+        name = appContext.getDatabasePath("vehicle_room.db").absolutePath,
+        // Στο Android η Room βρίσκει μόνη της τον AppDatabaseConstructor
     )
 }
