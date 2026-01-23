@@ -12,3 +12,5 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
         // Αφαιρούμε το factory. Η Room θα χρησιμοποιήσει τον δικό της αυτόματο Constructor.
     ).setDriver(BundledSQLiteDriver())
 }
+
+actual object VehicleDatabaseConstructor : RoomDatabaseConstructor<VehicleDatabase>
