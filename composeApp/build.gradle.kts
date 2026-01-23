@@ -6,7 +6,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
-    id("androidx.room") version "2.7.0-alpha11" // Συγχρονισμένο με την έκδοση που ζήτησες
+    // ΔΙΟΡΘΩΣΗ: Επιστροφή στην alpha10 για να συμβαδίζει με το libs.versions.toml
+    id("androidx.room") version "2.7.0-alpha10"
 }
 
 kotlin {
@@ -18,7 +19,6 @@ kotlin {
         }
     }
 
-    // iOS Targets
     listOf(
         iosX64(),
         iosArm64(),
@@ -45,7 +45,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            // Room Dependencies
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
 
@@ -60,15 +59,13 @@ kotlin {
             implementation(libs.androidx.core.ktx)
         }
 
-        // Δημιουργία iosMain
         val iosMain by creating {
             dependsOn(commonMain.get())
         }
 
-        // Σύνδεση targets με iosMain
-        val iosX64Main by getting { dependsOn(iosMain) }
-        val iosArm64Main by getting { dependsOn(iosMain) }
-        val iosSimulatorArm64Main by getting { dependsOn(iosMain) }
+        iosX64Main.get().dependsOn(iosMain)
+        iosArm64Main.get().dependsOn(iosMain)
+        iosSimulatorArm64Main.get().dependsOn(iosMain)
     }
 
     compilerOptions {
@@ -98,19 +95,16 @@ android {
     }
 }
 
-// Ρύθμιση Room Plugin
 room {
     schemaDirectory("$projectDir/schemas")
     generateKotlin = true
 }
 
-// ΚΡΙΣΙΜΟ: Ρύθμιση KSP για αποφυγή του "Already defined"
 dependencies {
     ksp(libs.androidx.room.compiler)
 }
 
-// Αυτό το μπλοκ λέει στο KSP να ΜΗΝ παράγει τον Constructor αυτόματα,
-// επειδή τον έχουμε ήδη ορίσει εμείς στο commonMain/iosMain/androidMain.
 ksp {
-    arg("room.androidx.room.RoomDatabaseConstructor", "false")
+    // Απαραίτητο για να μην χτυπάει ο διπλός constructor στο GitHub
+    arg("room.androidx.room.RoomDatabaseConstructor", "true")
 }
