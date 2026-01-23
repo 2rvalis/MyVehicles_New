@@ -8,7 +8,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(
-        name = dbFile
-        // ΠΡΟΣΟΧΗ: ΚΑΝΕΝΑ factory εδώ. Η Room θα βρει μόνη της τον Constructor που παρήγαγε.
+        name = dbFile,
+        // Αφαιρούμε το factory. Η Room θα χρησιμοποιήσει τον δικό της αυτόματο Constructor.
     ).setDriver(BundledSQLiteDriver())
 }
