@@ -13,6 +13,8 @@ actual abstract class VehicleDatabase : RoomDatabase() {
     actual abstract fun vehicleDao(): VehicleDao
 }
 
+// ΕΔΩ ΔΕΝ ΠΡΕΠΕΙ ΝΑ ΥΠΑΡΧΕΙ ΤΟ actual object AppDatabaseConstructor
+
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val dbFile = NSHomeDirectory() + "/vehicle_room.db"
     return Room.databaseBuilder<VehicleDatabase>(

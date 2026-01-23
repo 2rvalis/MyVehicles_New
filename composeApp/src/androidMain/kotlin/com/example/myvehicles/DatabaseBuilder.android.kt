@@ -14,6 +14,8 @@ actual abstract class VehicleDatabase : RoomDatabase() {
     actual abstract fun vehicleDao(): VehicleDao
 }
 
+// ΕΔΩ ΔΕΝ ΠΡΕΠΕΙ ΝΑ ΥΠΑΡΧΕΙ ΤΟ actual object AppDatabaseConstructor
+
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val appContext = globalContext.applicationContext
     return Room.databaseBuilder<VehicleDatabase>(
