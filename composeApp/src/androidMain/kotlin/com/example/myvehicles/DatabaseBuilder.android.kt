@@ -1,25 +1,18 @@
 package com.example.myvehicles
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.RoomDatabase
 import androidx.room.Room
-import androidx.room.ConstructedBy
+import androidx.room.RoomDatabase
 
 lateinit var globalContext: Context
 
-@Database(entities = [Vehicle::class], version = 1)
-@ConstructedBy(AppDatabaseConstructor::class)
-actual abstract class VehicleDatabase : RoomDatabase() {
-    actual abstract fun vehicleDao(): VehicleDao
-}
-
-// ΕΔΩ ΔΕΝ ΠΡΕΠΕΙ ΝΑ ΥΠΑΡΧΕΙ ΤΟ actual object AppDatabaseConstructor
+// ΤΟ actual object AppDatabaseConstructor ΠΑΡΑΓΕΤΑΙ ΑΥΤΟΜΑΤΑ ΑΠΟ ΤΗ ROOM - ΜΗΝ ΤΟ ΓΡΑΦΕΙΣ
 
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<VehicleDatabase> {
     val appContext = globalContext.applicationContext
+    val dbFile = appContext.getDatabasePath("vehicle_room.db")
     return Room.databaseBuilder<VehicleDatabase>(
         context = appContext,
-        name = appContext.getDatabasePath("vehicle_room.db").absolutePath
+        name = dbFile.absolutePath
     )
 }

@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
-    // ΔΙΟΡΘΩΣΗ: Επιστροφή στην alpha10 για να συμβαδίζει με το libs.versions.toml
     id("androidx.room") version "2.7.0-alpha10"
 }
 
@@ -19,6 +18,7 @@ kotlin {
         }
     }
 
+    // Ρύθμιση των iOS Targets
     listOf(
         iosX64(),
         iosArm64(),
@@ -59,6 +59,7 @@ kotlin {
             implementation(libs.androidx.core.ktx)
         }
 
+        // ΔΙΟΡΘΩΣΗ: Χρήση "val iosMain by creating" αντί για "getting"
         val iosMain by creating {
             dependsOn(commonMain.get())
         }
@@ -67,7 +68,7 @@ kotlin {
         iosArm64Main.get().dependsOn(iosMain)
         iosSimulatorArm64Main.get().dependsOn(iosMain)
     }
-
+    // Απαραίτητο για τα expect/actual objects της Room
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
@@ -84,27 +85,34 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
+// Ρύθμιση Room Plugin
 room {
     schemaDirectory("$projectDir/schemas")
     generateKotlin = true
 }
 
+// Διορθωμένο KSP configuration για να καλύπτει όλα τα targets (Android & iOS)
 dependencies {
-    ksp(libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
 
+// Προαιρετικό αλλά χρήσιμο για CI/GitHub Actions
 ksp {
-    // Απαραίτητο για να μην χτυπάει ο διπλός constructor στο GitHub
-    arg("room.androidx.room.RoomDatabaseConstructor", "true")
+    arg("room.generateKotlin", "true")
 }
